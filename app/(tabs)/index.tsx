@@ -1,11 +1,19 @@
+import { FontAwesome5 } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function Dashboard() {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
       {/* Header */}
-      <Text style={styles.welcome}>Selamat Datang,</Text>
-      <Text style={styles.username}>Muhammad Abdullah!</Text>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.welcome}>Selamat Datang,</Text>
+          <Text style={styles.username}>Muhammad Abdullah!</Text>
+        </View>
+        <View style={styles.notificationIcon}>
+          <FontAwesome5 name="bell" size={20} color="#555" />
+        </View>
+      </View>
 
       {/* Saldo dan Rekening */}
       <View style={styles.saldoCard}>
@@ -31,7 +39,7 @@ export default function Dashboard() {
 
       {/* Info Pinjaman */}
       <View style={styles.pinjamanRow}>
-        <View style={[styles.pinjamanBox, { backgroundColor: '#d1f0d1' }]}>
+        <View style={[styles.pinjamanBox, { backgroundColor: '#e8f5e9' }]}>
           <Text style={styles.pinjamanLabel}>Pinjaman Aktif</Text>
           <Text style={styles.pinjamanValue}>3</Text>
         </View>
@@ -42,23 +50,27 @@ export default function Dashboard() {
       </View>
 
       {/* Aktivitas Terakhir */}
-      <Text style={styles.sectionTitle}>Aktifitas Terakhir</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Aktifitas Terakhir</Text>
+        <Text style={styles.seeAllLink}>Lihat Semua</Text>
+      </View>
+      
       {[
-        { type: 'Setoran', nominal: '+ Rp 200.000', color: 'green' },
-        { type: 'Penarikan', nominal: '- Rp 150.000', color: 'red' },
-        { type: 'Setoran', nominal: '+ Rp 200.000', color: 'green' },
+        { type: 'Setoran', nominal: '+ Rp 200.000', color: '#3c9a4b', date: '8 Mei 2025', icon: 'arrow-up' },
+        { type: 'Penarikan', nominal: '- Rp 150.000', color: '#e53935', date: '5 Mei 2025', icon: 'arrow-down' },
+        { type: 'Setoran', nominal: '+ Rp 200.000', color: '#3c9a4b', date: '1 Mei 2025', icon: 'arrow-up' },
       ].map((item, idx) => (
         <View key={idx} style={styles.aktivitasItem}>
-          <View style={styles.iconCircle}>
-            <Text style={{ fontSize: 16 }}>💰</Text>
+          <View style={[styles.iconCircle, { backgroundColor: item.color === '#3c9a4b' ? '#e8f5e9' : '#ffebee' }]}>
+            <FontAwesome5 name={item.icon} size={16} color={item.color} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.aktivitasLabel}>
               {item.type} Simpanan
             </Text>
-            <Text style={styles.aktivitasDate}>8 Mei 2025</Text>
+            <Text style={styles.aktivitasDate}>{item.date}</Text>
           </View>
-          <Text style={{ color: item.color }}>{item.nominal}</Text>
+          <Text style={[styles.aktivitasAmount, { color: item.color }]}>{item.nominal}</Text>
         </View>
       ))}
     </ScrollView>
@@ -66,67 +78,173 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
-  welcome: { fontSize: 16, color: '#333' },
-  username: { fontSize: 20, fontWeight: 'bold', color: 'green', marginBottom: 20 },
-
-  saldoCard: {
-    backgroundColor: '#FFCC33',
-    borderRadius: 12,
-    padding: 20,
+  scrollView: {
+    backgroundColor: '#f8f9fa',
+  },
+  container: { 
+    padding: 20, 
+    paddingBottom: 40,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
-  rekening: { fontSize: 14, fontWeight: '600', textAlign: 'right' },
-  saldoLabel: { marginTop: 10, color: '#333', fontSize: 14 },
-  saldo: { fontSize: 22, fontWeight: 'bold', color: '#000' },
-  saldoSub: { fontSize: 12, color: '#333' },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  welcome: { 
+    fontSize: 16, 
+    color: '#555',
+    marginBottom: 4,
+  },
+  username: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: '#3c9a4b',
+  },
+
+  saldoCard: {
+    backgroundColor: '#FFD700',
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  rekening: { 
+    fontSize: 14, 
+    fontWeight: '600', 
+    textAlign: 'right',
+    color: '#555',
+  },
+  saldoLabel: { 
+    marginTop: 10, 
+    color: '#555', 
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  saldo: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: '#000',
+    marginBottom: 4,
+  },
+  saldoSub: { 
+    fontSize: 12, 
+    color: '#555',
+  },
 
   limitRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: 12,
     marginBottom: 20,
   },
   limitBox: {
     flex: 1,
-    borderColor: '#4CAF50',
+    borderColor: '#3c9a4b',
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
+    backgroundColor: '#fff',
   },
-  limitTitle: { fontSize: 14, color: '#333' },
-  limitValue: { fontSize: 16, fontWeight: 'bold', marginTop: 8 },
+  limitTitle: { 
+    fontSize: 14, 
+    color: '#555',
+    marginBottom: 8,
+  },
+  limitValue: { 
+    fontSize: 16, 
+    fontWeight: 'bold',
+    color: '#333',
+  },
 
   pinjamanRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 24,
+    gap: 12,
   },
   pinjamanBox: {
     flex: 1,
     borderRadius: 12,
     padding: 16,
-    marginHorizontal: 5,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
-  pinjamanLabel: { fontSize: 14, color: '#333' },
-  pinjamanValue: { fontSize: 18, fontWeight: 'bold' },
+  pinjamanLabel: { 
+    fontSize: 14, 
+    color: '#555',
+    marginBottom: 8,
+  },
+  pinjamanValue: { 
+    fontSize: 20, 
+    fontWeight: 'bold',
+    color: '#333',
+  },
 
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 10, color: '#333' },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: { 
+    fontSize: 16, 
+    fontWeight: 'bold', 
+    color: '#333',
+  },
+  seeAllLink: {
+    fontSize: 14,
+    color: '#3c9a4b',
+  },
   aktivitasItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f6f6f6',
-    padding: 14,
-    borderRadius: 8,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   iconCircle: {
-    backgroundColor: '#C5E1A5',
     borderRadius: 20,
-    padding: 10,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
-  aktivitasLabel: { fontSize: 14, fontWeight: '500' },
-  aktivitasDate: { fontSize: 12, color: '#777' },
+  aktivitasLabel: { 
+    fontSize: 14, 
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  aktivitasDate: { 
+    fontSize: 12, 
+    color: '#777',
+  },
+  aktivitasAmount: {
+    fontSize: 14,
+    fontWeight: '600',
+  }
 });

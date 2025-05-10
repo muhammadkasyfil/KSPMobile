@@ -6,6 +6,8 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = () => {
     router.replace('/(tabs)');
@@ -17,48 +19,72 @@ export default function RegisterPage() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.leftIllustration}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.imageText}>[ Gambar Placeholder ]</Text>
+      <View style={styles.content}>
+        <View style={styles.leftSection}>
+          <Image 
+            source={require('../assets/images/LOGOMU.png')} 
+            style={styles.illustration} 
+          />
         </View>
-      </View>
 
-      <View style={styles.formContainer}>
-        <Image source={{ uri: 'https://via.placeholder.com/80x50' }} style={styles.logo} />
+        <View style={styles.formContainer}>
+          {/* Logo */}
+          <Image 
+            source={require('../assets/images/LOGOMU.png')} 
+            style={styles.logo} 
+          />
 
-        <Text style={styles.label}>Nomor Telepon</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="0888888888"
-          value={phone}
-          onChangeText={setPhone}
-        />
+          <Text style={styles.label}>Nomor Telepon</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="08888888"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+          />
 
-        <Text style={styles.label}>Kata Sandi</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="••••••••"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+          <Text style={styles.label}>Kata Sandi</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="••••••••"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity 
+              style={styles.eyeIcon} 
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Text style={styles.eyeIconText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+            </TouchableOpacity>
+          </View>
 
-        <Text style={styles.label}>Konfirmasi Kata Sandi</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="••••••••"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
+          <Text style={styles.label}>Konfirmasi Kata Sandi</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="••••••••"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity 
+              style={styles.eyeIcon} 
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              <Text style={styles.eyeIconText}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
-          <Text style={styles.loginButtonText}>Selanjutnya</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>Selanjutnya</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={goToLogin}>
-          <Text style={styles.link}>Masuk ke Akun</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={goToLogin}>
+            <Text style={styles.loginLink}>Masuk ke Akun</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -67,68 +93,90 @@ export default function RegisterPage() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
-    padding: 24,
     backgroundColor: '#ffffff',
   },
-  leftIllustration: {
-    alignItems: 'center',
-    marginBottom: 24,
+  content: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  imagePlaceholder: {
-    width: 200,
-    height: 140,
-    backgroundColor: '#e0e0e0',
+  leftSection: {
+    width: '100%',
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
+    padding: 20,
   },
-  imageText: {
-    color: '#777',
-    fontSize: 12,
+  illustration: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
   formContainer: {
-    backgroundColor: '#fafafa',
-    borderRadius: 12,
-    padding: 24,
-    elevation: 3,
+    width: '100%',
+    padding: 20,
+    backgroundColor: '#ffffff',
   },
   logo: {
-    height: 50,
-    width: 80,
+    height: 60,
+    width: 120,
     resizeMode: 'contain',
     alignSelf: 'center',
-    marginBottom: 24,
+    marginBottom: 30,
   },
   label: {
-    marginTop: 12,
-    marginBottom: 6,
-    fontSize: 14,
-    color: '#333',
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 8,
+    fontWeight: '500',
   },
   input: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    backgroundColor: '#f5f5f5',
     borderRadius: 8,
-    borderColor: '#ddd',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 16,
     borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
-  loginButton: {
-    marginTop: 24,
-    backgroundColor: '#3c9a4b',
-    paddingVertical: 14,
+  passwordContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    marginBottom: 16,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  eyeIcon: {
+    padding: 12,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  loginButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+  eyeIconText: {
+    fontSize: 18,
+    color: '#777',
   },
-  link: {
-    marginTop: 12,
-    color: '#3c68a4',
+  registerButton: {
+    backgroundColor: '#3c9a4b', // Green color from the image
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  registerButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginLink: {
+    color: '#4169E1',
     textAlign: 'center',
+    fontSize: 14,
+    marginTop: 8,
   },
 });
