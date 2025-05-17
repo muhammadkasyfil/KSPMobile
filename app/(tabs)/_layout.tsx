@@ -1,4 +1,4 @@
-import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
@@ -7,37 +7,34 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#3c9a4b',
-        tabBarInactiveTintColor: '#777',
         tabBarStyle: {
+          backgroundColor: '#FFD700',
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
           height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-          backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: '#eee',
-          elevation: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+          borderRadius: 30,
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+          right: 10,
         },
-        tabBarLabelStyle: { 
+        tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',
+          paddingBottom: 5,
         },
-        tabBarIconStyle: {
-          marginBottom: 2,
-        },
+        tabBarActiveTintColor: '#000',
+        tabBarInactiveTintColor: '#000',
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <Ionicons name="home" size={size} color={color} />
+          title: 'Beranda',
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.activeIconContainer : styles.iconContainer}>
+              <FontAwesome5 name="home" size={20} color="#000" />
             </View>
           ),
         }}
@@ -46,9 +43,9 @@ export default function TabLayout() {
         name="simpanan"
         options={{
           title: 'Simpanan',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <FontAwesome5 name="piggy-bank" size={size-2} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.activeIconContainer : styles.iconContainer}>
+              <FontAwesome5 name="money-bill-alt" size={20} color="#000" />
             </View>
           ),
         }}
@@ -57,9 +54,9 @@ export default function TabLayout() {
         name="pinjaman"
         options={{
           title: 'Pinjaman',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <FontAwesome5 name="hand-holding-usd" size={size-2} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.activeIconContainer : styles.iconContainer}>
+              <FontAwesome5 name="hand-holding-usd" size={20} color="#000" />
             </View>
           ),
         }}
@@ -67,10 +64,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profil',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <FontAwesome5 name="user" size={size-2} color={color} />
+          title: 'Akun',
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.activeIconContainer : styles.iconContainer}>
+              <FontAwesome5 name="user" size={20} color="#000" />
             </View>
           ),
         }}
@@ -81,7 +78,17 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconContainer: {
-    alignItems: 'center',
+    width: 40,
+    height: 40,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeIconContainer: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 20,
   },
 });
