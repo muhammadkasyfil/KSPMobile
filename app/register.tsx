@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = () => {
-    router.replace('/(tabs)');
+    router.push('/otp');
   };
 
   const goToLogin = () => {
