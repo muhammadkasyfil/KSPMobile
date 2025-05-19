@@ -1,4 +1,5 @@
 import { FontAwesome5 } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -20,7 +21,7 @@ export default function ProfilePage() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Akun</Text>
-          <TouchableOpacity style={styles.settingsButton}>
+          <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/account-settings')}>
             <FontAwesome5 name="cog" size={24} color="#333" />
           </TouchableOpacity>
         </View>
