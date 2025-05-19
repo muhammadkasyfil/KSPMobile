@@ -19,20 +19,12 @@ export default function RegisterPage() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.leftSection}>
-          <Image 
-            source={require('../assets/images/LOGOMU.png')} 
-            style={styles.illustration} 
-          />
-        </View>
-
-        <View style={styles.formContainer}>
-          {/* Logo */}
-          <Image 
-            source={require('../assets/images/LOGOMU.png')} 
-            style={styles.logo} 
-          />
+      <View style={styles.innerContainer}>
+        {/* Logo */}
+        <Image 
+          source={require('../assets/images/LOGOMU.png')} 
+          style={styles.logo} 
+       />
 
           <Text style={styles.label}>Nomor Telepon</Text>
           <TextInput
@@ -85,7 +77,6 @@ export default function RegisterPage() {
             <Text style={styles.loginLink}>Masuk ke Akun</Text>
           </TouchableOpacity>
         </View>
-      </View>
     </ScrollView>
   );
 }
@@ -94,6 +85,13 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  innerContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'stretch',
   },
   content: {
     flex: 1,
@@ -117,11 +115,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   logo: {
-    height: 60,
-    width: 120,
+    height: 100,
+    width: 200,
     resizeMode: 'contain',
     alignSelf: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
   },
   label: {
     fontSize: 16,
