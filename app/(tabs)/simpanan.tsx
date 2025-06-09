@@ -205,6 +205,7 @@ export default function SimpananPage() {
                       <TextInput
                         style={[styles.input, styles.currencyInput]}
                         placeholder="Contoh: 1000000"
+                        placeholderTextColor="#999"
                         keyboardType="numeric"
                         value={withdrawalData.amount}
                         onChangeText={text => setWithdrawalData({ ...withdrawalData, amount: text })}
@@ -562,7 +563,7 @@ const styles = StyleSheet.create({
   limitText: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 16
+    marginTop: 2,
   },
   primaryButton: {
     backgroundColor: '#3c9a4b',

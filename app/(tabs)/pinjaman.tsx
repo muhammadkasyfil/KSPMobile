@@ -184,11 +184,13 @@ export default function PinjamanPage() {
                 <TextInput
                   style={styles.input}
                   placeholder="Jenis Pinjaman"
+                  placeholderTextColor="#999"
                   onChangeText={text => setLoanData({ ...loanData, type: text })}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Peruntukan Pinjaman"
+                  placeholderTextColor="#999"
                   onChangeText={text => setLoanData({ ...loanData, purpose: text })}
                 />
                 <TouchableOpacity onPress={handleNextStep} style={styles.primaryButton}>
@@ -223,11 +225,13 @@ export default function PinjamanPage() {
                 <TextInput
                   style={styles.input}
                   placeholder="Contoh: 2 Bulan"
+                  placeholderTextColor="#999"
                   onChangeText={text => setLoanData({ ...loanData, tenor: text })}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Jatuh Tempo Tanggal (misal: 10)"
+                  placeholderTextColor="#999"
                   keyboardType="numeric"
                   onChangeText={text => setLoanData({ ...loanData, dueDate: text })}
                 />
