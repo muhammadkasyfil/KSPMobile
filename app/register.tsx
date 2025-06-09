@@ -1,82 +1,122 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [nik, setNik] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthDate, setBirthDate] = useState(''); // Format: YYYY-MM-DD
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = () => {
-    router.push('/otp');
-  };
+  const handleRegister = async () => {
+    if (!phone || !password || !confirmPassword || !nik || !birthDate || !firstName || !lastName) {
+      Alert.alert('Error', 'Semua field wajib diisi');
+      return;
+    }
 
-  const goToLogin = () => {
-    router.replace('/login');
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Konfirmasi password tidak cocok');
+      return;
+    }
+
+    try {
+      const res = await fetch('https://kspdigital-api.up.railway.app/api/users/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone,
+          password,
+          confirm_password: confirmPassword,
+          nik,
+          tanggal_lahir: birthDate,
+          first_name: firstName,
+          last_name: lastName,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        Alert.alert('Berhasil', 'Akun berhasil didaftarkan!');
+        router.push('/login');
+      } else {
+        Alert.alert('Gagal', JSON.stringify(data));
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Terjadi kesalahan jaringan');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Logo */}
-        <Image 
-          source={require('../assets/images/LOGOMU.png')} 
-          style={styles.logo} 
-       />
+        <Image source={require('../assets/images/LOGOMU.png')} style={styles.logo} />
 
-          <Text style={styles.label}>Nomor Telepon</Text>
+        {/* Input fields */}
+        <Text style={styles.label}>Nama Depan</Text>
+        <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} />
+
+        <Text style={styles.label}>Nama Belakang</Text>
+        <TextInput style={styles.input} value={lastName} onChangeText={setLastName} />
+
+        <Text style={styles.label}>Nomor Telepon</Text>
+        <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+
+        <Text style={styles.label}>NIK</Text>
+        <TextInput style={styles.input} value={nik} onChangeText={setNik} keyboardType="number-pad" />
+
+        <Text style={styles.label}>Tanggal Lahir (YYYY-MM-DD)</Text>
+        <TextInput style={styles.input} value={birthDate} onChangeText={setBirthDate} />
+
+        <Text style={styles.label}>Kata Sandi</Text>
+        <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="08888888"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
+            style={styles.passwordInput}
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
           />
-
-          <Text style={styles.label}>Kata Sandi</Text>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="••••••••"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity 
-              style={styles.eyeIcon} 
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Text style={styles.eyeIconText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.label}>Konfirmasi Kata Sandi</Text>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="••••••••"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-            <TouchableOpacity 
-              style={styles.eyeIcon} 
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Text style={styles.eyeIconText}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>Selanjutnya</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={goToLogin}>
-            <Text style={styles.loginLink}>Masuk ke Akun</Text>
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+            <Text style={styles.eyeIconText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
           </TouchableOpacity>
         </View>
+
+        <Text style={styles.label}>Konfirmasi Kata Sandi</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            secureTextEntry={!showConfirmPassword}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.eyeIcon}>
+            <Text style={styles.eyeIconText}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+          <Text style={styles.registerButtonText}>Daftar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.replace('/login')}>
+          <Text style={styles.loginLink}>Masuk ke Akun</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }

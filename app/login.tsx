@@ -1,72 +1,90 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [coopCode, setCoopCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    router.replace('/(tabs)');
+  const handleLogin = async () => {
+    if (!phone || !password) {
+      Alert.alert('Error', 'Nomor telepon dan password wajib diisi');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://kspdigital-api.up.railway.app/api/users/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Login sukses:', data);
+        // Simpan token atau data lain di AsyncStorage jika dibutuhkan nanti
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert('Login Gagal', data.message || 'Periksa kembali data yang Anda masukkan.');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Terjadi kesalahan jaringan');
+    }
   };
 
   const goToRegister = () => {
     router.push('/register');
   };
 
-  // const goToResetPassword = () => {
-  //   router.push('/reset-password');
-  // };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Logo */}
-        <Image 
-          source={require('../assets/images/LOGOMU.png')} 
-          style={styles.logo} 
-       />
+        <Image source={require('../assets/images/LOGOMU.png')} style={styles.logo} />
 
-          <Text style={styles.label}>Nomor Telepon</Text>
+        <Text style={styles.label}>Nomor Telepon</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="088888888888"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+        />
+
+        <Text style={styles.label}>Kata Sandi</Text>
+        <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="088888888888"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
+            style={styles.passwordInput}
+            placeholder="••••••••"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
           />
-
-          <Text style={styles.label}>Kata Sandi</Text>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="••••••••"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity 
-              style={styles.eyeIcon} 
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Text style={styles.eyeIconText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* <TouchableOpacity onPress={goToResetPassword}>
-            <Text style={styles.forgotPassword}>Atur Ulang Kata Sandi?</Text>
-          </TouchableOpacity> */}
-
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Masuk</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={goToRegister}>
-            <Text style={styles.registerLink}>Daftar Akun</Text>
+          <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+            <Text style={styles.eyeIconText}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Masuk</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={goToRegister}>
+          <Text style={styles.registerLink}>Daftar Akun</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
