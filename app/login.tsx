@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -32,15 +33,17 @@ export default function LoginPage() {
       });
 
       const data = await response.json();
+      console.log('Response JSON:', data);
 
-      if (response.ok) {
-        console.log('Login sukses:', data);
-        // Simpan token atau data lain di AsyncStorage jika dibutuhkan nanti
+      if (response.ok && data.access_token) {
+        await AsyncStorage.setItem('token', data.access_token);
+        await AsyncStorage.setItem('refresh_token', data.refresh_token); // opsional
         router.replace('/(tabs)');
       } else {
-        Alert.alert('Login Gagal', data.message || 'Periksa kembali data yang Anda masukkan.');
+        Alert.alert('Login Gagal', data.message || data.error || 'Periksa kembali data yang Anda masukkan.');
       }
     } catch (err) {
+      console.error('Network/Login Error:', err);
       Alert.alert('Error', 'Terjadi kesalahan jaringan');
     }
   };
