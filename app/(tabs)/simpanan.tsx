@@ -147,7 +147,7 @@ export default function SimpananPage() {
                       style={styles.methodCard}
                       onPress={() => {
                         setWithdrawalData({ ...withdrawalData, method: 'Kantor' });
-                        handleNextStep();
+                        setStep(3);
                       }}>
                       <FontAwesome5 name="map-marker-alt" size={20} color="#fbc02d" style={styles.methodIcon} />
                       <View>
