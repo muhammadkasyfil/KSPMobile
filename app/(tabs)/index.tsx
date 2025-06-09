@@ -1,14 +1,64 @@
 import { FontAwesome5 } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function Dashboard() {
+  const [userName, setUserName] = useState('');
+  const [rekening, setRekening] = useState('');
+  const [saldoPokok, setSaldoPokok] = useState(0);
+  const [transaksi, setTransaksi] = useState<any[]>([]);
+  const router = useRouter();
+
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) return;
+
+      // Ambil profil user
+      const profileRes = await fetch(
+        'https://kspdigital-api.up.railway.app/api/users/me/',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        setUserName(`${profile.first_name} ${profile.last_name || ''}`.trim());
+        setRekening(profile.nomor_rekening || '');
+        setSaldoPokok(parseFloat(profile.saldo_simpanan_pokok || '0'));
+      }
+
+      // Ambil transaksi simpanan pokok
+      const simpananRes = await fetch(
+        'https://kspdigital-api.up.railway.app/api/simpanan/transaksi-simpanan/?jenis_simpanan=pokok',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (simpananRes.ok) {
+        const simpananData = await simpananRes.json();
+        setTransaksi(simpananData.results || []);
+      }
+    } catch (error) {
+      console.error('Gagal memuat data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View>
           <Text style={styles.welcome}>Selamat Datang,</Text>
-          <Text style={styles.username}>Muhammad Abdullah!</Text>
+          <Text style={styles.username}>{userName || 'Anggota Koperasi'}</Text>
         </View>
         <View style={styles.notificationIcon}>
           <FontAwesome5 name="bell" size={20} color="#555" />
@@ -18,9 +68,9 @@ export default function Dashboard() {
       {/* Saldo dan Rekening */}
       <View style={styles.saldoCard}>
         <View>
-          <Text style={styles.rekening}>123–3456–7890</Text>
+          <Text style={styles.rekening}>{rekening || '123–3456–7890'}</Text>
           <Text style={styles.saldoLabel}>Saldo Simpanan Pokok</Text>
-          <Text style={styles.saldo}>Rp 11.477.000</Text>
+          <Text style={styles.saldo}>Rp {saldoPokok.toLocaleString('id-ID')}</Text>
           <Text style={styles.saldoSub}>Simpanan wajib Rp 50.000</Text>
         </View>
       </View>
@@ -54,25 +104,35 @@ export default function Dashboard() {
         <Text style={styles.sectionTitle}>Aktifitas Terakhir</Text>
         <Text style={styles.seeAllLink}>Lihat Semua</Text>
       </View>
-      
-      {[
-        { type: 'Setoran', nominal: '+ Rp 200.000', color: '#3c9a4b', date: '8 Mei 2025', icon: 'arrow-up' },
-        { type: 'Penarikan', nominal: '- Rp 150.000', color: '#e53935', date: '5 Mei 2025', icon: 'arrow-down' },
-        { type: 'Setoran', nominal: '+ Rp 200.000', color: '#3c9a4b', date: '1 Mei 2025', icon: 'arrow-up' },
-      ].map((item, idx) => (
-        <View key={idx} style={styles.aktivitasItem}>
-          <View style={[styles.iconCircle, { backgroundColor: item.color === '#3c9a4b' ? '#e8f5e9' : '#ffebee' }]}>
-            <FontAwesome5 name={item.icon} size={16} color={item.color} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.aktivitasLabel}>
-              {item.type} Simpanan
+
+      {transaksi.map((item, idx) => {
+        const isSetoran = item.jenis_transaksi === 'setoran';
+        return (
+          <View key={item.id || idx} style={styles.aktivitasItem}>
+            <View style={[
+              styles.iconCircle,
+              { backgroundColor: isSetoran ? '#e8f5e9' : '#ffebee' }
+            ]}>
+              <FontAwesome5
+                name={isSetoran ? 'arrow-up' : 'arrow-down'}
+                size={16}
+                color={isSetoran ? '#3c9a4b' : '#e53935'}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.aktivitasLabel}>
+                {isSetoran ? 'Setoran' : 'Penarikan'} Simpanan
+              </Text>
+              <Text style={styles.aktivitasDate}>
+                {new Date(item.tanggal_transaksi).toLocaleDateString('id-ID')}
+              </Text>
+            </View>
+            <Text style={[styles.aktivitasAmount, { color: isSetoran ? '#3c9a4b' : '#e53935' }]}>
+              {`${isSetoran ? '+ ' : '- '}Rp ${parseInt(item.nominal).toLocaleString('id-ID')}`}
             </Text>
-            <Text style={styles.aktivitasDate}>{item.date}</Text>
           </View>
-          <Text style={[styles.aktivitasAmount, { color: item.color }]}>{item.nominal}</Text>
-        </View>
-      ))}
+        );
+      })}
     </ScrollView>
   );
 }
